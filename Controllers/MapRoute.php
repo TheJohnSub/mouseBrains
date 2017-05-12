@@ -88,7 +88,6 @@ class MapRoute
 		{
 			header('Content-type: application/json');
 			$response = new Response(0, "", NULL);
-			
 			$requestObj = json_decode($postData);
 			$oldMapObj = $this->GetMapById($requestObj->MapID, $db);
 			$CoorType = $requestObj->CoorType;
