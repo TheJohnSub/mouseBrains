@@ -62,8 +62,6 @@ class MapRoute
 			return $response->toJSON();
 		}
 
-
-
 		else if ($pathArr[ARRAY_START+1] == "new")
 		{
 			$response = new Response(0, "", NULL);
@@ -92,9 +90,18 @@ class MapRoute
 			$response = new Response(0, "", NULL);
 			
 			$requestObj = json_decode($postData);
+			$oldMapObj = $this->GetMapById($requestObj->MapID, $db);
+			$CoorType = $requestObj->CoorType;
 			if ($this->UpdateMapCoordinate($db, $requestObj, $response) == TRUE)
 			{
-				$response->ResponseObject = $requestObj;
+				$newMapObj = $this->GetMapById($requestObj->MapID, $db);
+				$changeObj = new Change();
+				$changeObj->CreateCoordinateUpdateChange($oldMapObj, $newMapObj, $requestObj->CoorType);
+
+				$this->InsertChange($db, $changeObj, $response);
+				$xyzResp = new XYZResp($newMapObj->{$CoorType . 'X'}, $newMapObj->{$CoorType . 'Y'}, $newMapObj->{$CoorType . 'Z'});
+
+				$response->ResponseObject = $xyzResp;
 				$response->ResponseCode = 200;
 				$response->ResponseMessage = "Coordinates saved.";
 			}
@@ -212,6 +219,19 @@ class MapRoute
 	{
    		header('Location: ' . $url, true, $statusCode);
    		die();
+	}
+
+	function InsertChange($db, $changeObj, $responseObj)
+	{
+		$objAsStr = $changeObj->ValListStr($db);
+		$sql = 'INSERT INTO changes(MapID, UserID, ChangeDate, ChangeType, OriginalValue, NewValue, IsPublicChange, ChangeLog) VALUES (' . $objAsStr . ')';
+		$result = '';
+		if ($db->ExecuteInsert($sql, $responseObj) === TRUE) {
+    		$result = "New record created successfully.";
+		} else {
+    		$result =  "Error inserting record.";
+		}
+		return $result;	
 	}
 }
 

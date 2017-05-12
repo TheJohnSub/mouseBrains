@@ -38,3 +38,18 @@ CREATE TABLE Points
 	PRIMARY KEY (PointID),
 	FOREIGN KEY (MapID) REFERENCES Maps(MapID)
 );
+
+CREATE TABLE Changes
+(
+	ChangeID int NOT NULL AUTO_INCREMENT,
+	UserID int,
+	MapID int NOT NULL,
+	ChangeDate datetime,
+	ChangeType int,
+	OriginalValue text,
+	NewValue text,
+	IsPublicChange char(5) DEFAULT 'TRUE',
+	ChangeLog text,
+	PRIMARY KEY (ChangeID),
+	FOREIGN KEY (MapID) REFERENCES Maps(MapID)
+);

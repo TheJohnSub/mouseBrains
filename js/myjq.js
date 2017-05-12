@@ -1,11 +1,23 @@
 /*
-Version 1.1.0
+Version 1.2.0
 
 Change Log
   V1.1.0 2017-05-11 jrs: Added functionality support for "Edit Map"
+  V1.2.0 2017-05-12 jrs: Added functionality support for editing coordinate (bregma, etc) values on map
 */
 
 var PublicCoorType = '';
+
+var BREGMA_SPAN = ' <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="LaunchCoordinateModal(\'Bregma\')">';
+var LAMBDA_SPAN = ' <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="LaunchCoordinateModal(\'Lambda\')">';
+var MIDLINE_SPAN = ' <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="LaunchCoordinateModal(\'Midline\')">';
+
+if ($("#addNewPt-btn").length == 0) {
+  BREGMA_SPAN = '';
+  LAMBDA_SPAN = '';
+  MIDLINE_SPAN = '';
+}
+
 
 function LoadMapInformation(mapObject){
     $("#map-name-field").html(mapObject.Name);
@@ -24,9 +36,9 @@ function LoadMapInformation(mapObject){
     }
     else $("#map-notes-field").html("You haven't saved any notes on this map yet.");
 
-    $("#bregma-field").html('(' + mapObject.BregmaX + ', ' + mapObject.BregmaY + ', ' + mapObject.BregmaZ + ')');
-    $("#lambda-field").html('(' + mapObject.LambdaX + ', ' + mapObject.LambdaY + ', ' + mapObject.LambdaZ + ')');
-    $("#midline-field").html('(' + mapObject.MidlineX + ', ' + mapObject.MidlineY + ', ' + mapObject.MidlineZ + ')');
+    $("#bregma-field").html('(' + mapObject.BregmaX + ', ' + mapObject.BregmaY + ', ' + mapObject.BregmaZ + ')' + BREGMA_SPAN);
+    $("#lambda-field").html('(' + mapObject.LambdaX + ', ' + mapObject.LambdaY + ', ' + mapObject.LambdaZ + ')' + LAMBDA_SPAN);
+    $("#midline-field").html('(' + mapObject.MidlineX + ', ' + mapObject.MidlineY + ', ' + mapObject.MidlineZ + ')' + MIDLINE_SPAN);
 
     $("#saveMap-mapId").val(mapObject.MapID);  
 }
@@ -116,15 +128,31 @@ $(document).ready(function(){
         contentType: "application/json",
         success: function(result){
             if (result.ResponseCode == 200) {
-              Alert('Hey!');
-              //AddPointToMap(result.ResponseObject);  
-              //$('#addNewPt-form')[0].reset();
+              if (PublicCoorType == 'Bregma'){
+                $("#bregma-field").html('(' + result.ResponseObject.X + ', ' + result.ResponseObject.Y + ', ' + result.ResponseObject.Z + ')' + BREGMA_SPAN);
+                mapObject.ResponseObject.BregmaX = result.ResponseObject.X;
+                mapObject.ResponseObject.BregmaY = result.ResponseObject.Y;
+                mapObject.ResponseObject.BregmaZ = result.ResponseObject.Z;
+              }
+              if (PublicCoorType == 'Lambda'){
+                $("#lambda-field").html('(' + result.ResponseObject.X + ', ' + result.ResponseObject.Y + ', ' + result.ResponseObject.Z + ')' + LAMBDA_SPAN);
+                mapObject.ResponseObject.LambdaX = result.ResponseObject.X;
+                mapObject.ResponseObject.LambdaY = result.ResponseObject.Y;
+                mapObject.ResponseObject.LambdaZ = result.ResponseObject.Z;
+              }
+              if (PublicCoorType == 'Midline'){
+                $("#midline-field").html('(' + result.ResponseObject.X + ', ' + result.ResponseObject.Y + ', ' + result.ResponseObject.Z + ')' + MIDLINE_SPAN);
+                mapObject.ResponseObject.MidlineX = result.ResponseObject.X;
+                mapObject.ResponseObject.MidlineY = result.ResponseObject.Y;
+                mapObject.ResponseObject.MidlineZ = result.ResponseObject.Z;
+              }
+              $('#CoordinateModal').modal('toggle');
             }
             else {
             }  
           },
         error: function(result){
-            Alert('Fail!');
+            $('#CoordinateModal').modal('toggle');
           },
       });          
   
