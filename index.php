@@ -8,6 +8,8 @@ include_once('Models/Point.php');
 include_once('Controllers/MapRoute.php');
 include_once('Controllers/PointRoute.php');
 
+//comment
+
 $pathDetail = strtok($_SERVER["REQUEST_URI"],'?');
 $pathArr = explode('/',$pathDetail);
 $pathArr[ARRAY_START] = strtolower($pathArr[ARRAY_START]);
