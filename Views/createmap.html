@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Mouse Brain Mapper</title>
+
+	<meta name="description" content="A map that shows a mouse's brain.">
+	<meta name="author" content="John Subtirelu">
+
+	<link href="/mouseBrains/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/mouseBrains/css/style.css?v=1.1.0" rel="stylesheet">
+</head>
+
+
+<body>
+	<div class="container-fullwidth">
+		<nav class="navbar navbar-default">
+			<div class="container">
+				<div class="navbar-header">
+					<div class="navbar-brand">Mouse Brain Mapper</div>
+				</div>
+				<ul class="nav nav-tabs">
+					<li role="presentation"><a href="/mouseBrains">Home</a></li>
+					<li role="presentation" class="active"><a href="/mouseBrains/map/create">New Map</a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+	<div class="container-fluid">
+
+		<div class="row">
+			<div class="col-md-2"></div>
+			<div class="col-md-8">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Create New Map</h3>
+					</div>
+					<form class="panel-body" id="createNewMap-form" action="/mouseBrains/map/new" method="post">
+						<div class="form-group">
+							<label for="mapName">Name</label>
+							<input type="text" class="form-control" id="mapName" maxlength="30" name="Name">
+						</div>
+						<div class="form-group">
+							<label for="mapDescription">Description</label>
+							<textarea class="form-control" rows="5" id="mapDescription" name="Description"></textarea>
+						</div>
+
+						<div class="form-inline">
+							<div class="row">
+							    <div class="form-group col-md-6">
+									<label for="mouseName">Mouse Name</label>
+									<input type="text" class="form-control" id="mouseName" name="MouseName">
+								</div>
+							    <div class="form-group col-md-6">
+									<label for="mouseStrain">Mouse Strain</label>
+									<input type="text" class="form-control" id="mouseStrain" name="MouseStrain">
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+						</div>
+
+						<div class="form-inline">
+							<div class="row">
+							    <div class="form-inline col-xs-6">
+									<label for="mouseWeight">Body Weight</label>
+									<input type="number" step="any" class="form-control" id="mouseWeight" name="BodyWeight">
+								</div>
+							    <div class="form-inline col-xs-6">
+									<label for="mousedob">Date of Birth</label>
+									<input type="date" class="form-control" id="mousedob" name="DateOfBirth">
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+						</div>
+
+						<label>Bregma</label>
+						<div class="form-group">
+      						<div class="col-xs-4">
+								<input type="number" step="any" class="form-control" id="BregmaXField" placeholder="X" name="BregmaX">
+							</div>
+      						<div class="col-xs-4">
+								<input type="number" step="any" class="form-control" id="BregmaYField" placeholder="Y" name="BregmaY">
+							</div>
+							<div class="col-xs-4">
+								<input type="number" step="any" class="form-control" id="BregmaZField" placeholder="Z" name="BregmaZ">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<br/>
+						</div>
+						<label>Lambda</label>
+						<div class="form-group">
+      						<div class="col-xs-4">
+								<input type="number" step="any" class="form-control" id="LabmdaXField" placeholder="X" name="LambdaX">
+							</div>
+      						<div class="col-xs-4">
+								<input type="number" step="any" class="form-control" id="LabmdaYField" placeholder="Y" name="LambdaY">
+							</div>
+							<div class="col-xs-4">
+								<input type="number" step="any" class="form-control" id="LabmdaZField" placeholder="Z" name="LambdaZ">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<br/>
+						</div>
+						<label>Midline</label>
+						<div class="form-group">
+      						<div class="col-xs-4">
+								<input type="number" step="any" class="form-control" id="MidlineXField" placeholder="X" name="MidlineX">
+							</div>
+      						<div class="col-xs-4">
+								<input type="number" step="any" class="form-control" id="MidlineYField" placeholder="Y" name="MidlineY">
+							</div>
+							<div class="col-xs-4">
+								<input type="number" step="any" class="form-control" id="MidlineZField" placeholder="Z" name="MidlineZ">
+							</div>
+						</div>
+						<div class="form-group">
+							<br/>
+						</div>
+
+						<button type="submit" class="btn btn-success" id="createNewMap-btn">Create New Map</button>
+					</form>
+				</div>
+			</div>
+			<div class="col-md-2"></div>
+		</div>
+	</div>
+	<script src="/mouseBrains/js/jquery.min.js"></script>
+	<script src="/mouseBrains/js/myjq.js?v=1.1.0"></script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="/mouseBrains/js/plot.js"></script>
+	<script src="/mouseBrains/js/bootstrap.min.js"></script>
+	<script src="/mouseBrains/js/scripts.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Mouse Brain Mapper</title>
+
+	<meta name="description" content="A map that shows a mouse's brain.">
+	<meta name="author" content="John Subtirelu">
+
+	<link href="/mouseBrains/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/mouseBrains/css/style.css?v=1.1.0" rel="stylesheet">
+</head>
+
+
+<body>
+	<div class="container-fullwidth">
+		<nav class="navbar navbar-default">
+			<div class="container">
+				<div class="navbar-header">
+					<div class="navbar-brand">Mouse Brain Mapper</div>
+				</div>
+				<ul class="nav nav-tabs">
+					<li role="presentation"><a href="/mouseBrains">Home</a></li>
+					<li role="presentation" class="active"><a href="/mouseBrains/map/create">New Map</a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="jumbotron">
+					<h2 id="map-name-field">
+					</h2>
+					<p>
+						<div id="map-datecreated-field"></div>
+						<div id="map-description-field"></div><br/>
+					</p>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Mouse Name</th>
+							<th>Mouse Strain</th>
+							<th>Body Weight</th>
+							<th>Date of Birth</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td id="mouse-name-field"></td>
+							<td id="mouse-strain-field"></td>
+							<td id="body-weight-field"></td>
+							<td id="birth-date-field"></td>
+						</tr>
+					</tbody>
+				</table>
+				<table class="table">	
+					<thead>
+						<tr>
+							<th>Bregma</th>
+							<th>Lambda</th>
+							<th>Midline</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><div class="input-group">
+							  <div id="bregma-field"></div>
+							  <!--<span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="LaunchCoordinateModal('Bregma')"></span>	-->
+							</div></td>
+							<td id="lambda-field"></td>
+							<td id="midline-field"></td>
+						</tr>
+						<!-- Modal -->
+						<div class="modal fade" id="CoordinateModal" tabindex="-1" role="dialog" aria-labelledby="CoordinateModalLabel" aria-hidden="true">
+						  <div class="modal-dialog" role="document">
+						    <div class="modal-content">
+						      <div class="modal-header">
+						        <h5 class="modal-title" id="CoordinateModalLabel"></h5>
+						        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          <span aria-hidden="true">&times;</span>
+						        </button>
+						      </div>
+						      <div class="modal-body">
+						      	<form id="CoordinateEditForm">
+									<div class="form-group">
+				  						<div class="col-xs-4">
+											<input type="number" step="any" class="form-control" id="EditCoordinateX" placeholder="X">
+										</div>
+				  						<div class="col-xs-4">
+											<input type="number" step="any" class="form-control" id="EditCoordinateY" placeholder="Y">
+										</div>
+										<div class="col-xs-4">
+											<input type="number" step="any" class="form-control" id="EditCoordinateZ" placeholder="Z">
+										</div>
+									</div>						
+						      	</form>
+						      	<br/>
+						      </div>
+						      <div class="modal-footer">
+						        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						        <button type="button" class="btn btn-primary">Save changes</button>
+						      </div>
+						    </div>
+						  </div>
+						</div>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+
+		<div class="row">
+			<div class="col-md-4">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Track Data</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table">
+							<tbody>
+								<tr>
+									<th>Name</th>
+									<td id="point-name-field"></td>
+								</tr>
+								<tr>
+									<th>Notes</th>
+									<td id="point-notes-field"></td>
+								</tr>
+								<tr>
+									<th>Coordinates</th>
+									<td id="point-coordinates-field"></td>
+								</tr>
+								<tr>
+									<th>Date Created</th>
+									<td id="point-datecreated-field"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Save Map</h3>
+					</div>
+					<form class="panel-body" id="saveMap-form" action="/mouseBrains/map/save" method="post">
+						<div class="form-group">
+							<label for="mapNotes">
+								Notes
+							</label>
+							<textarea class="form-control" rows="5" id="mapNotes" name="Notes"></textarea>
+						</div>
+						<input type="hidden" id="saveMap-mapId" name="MapID" value="" />
+						<button type="submit" class="btn btn-success" id="saveMap-btn">
+							Save Map
+						</button>
+					</form>		
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div id="myDiv" style="width: 600px; height: 600px;"></div>
+			</div>
+			<div class="col-md-2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Add New Track</h3>
+					</div>
+					<form class="panel-body" id="addNewPt-form">
+						<div class="form-group">
+							<label for="pointName">Name</label>
+							<input type="text" class="form-control" id="pointName" maxlength="12">
+						</div>
+						<div class="form-group">
+							<label for="pointNotes">Notes</label>
+							<textarea class="form-control" rows="5" id="pointNotes"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="XCoordinate">X-Coordinate</label>
+							<input type="number" step="any" class="form-control" id="XCoordinate">
+						</div>
+						<div class="form-group">
+							<label for="YCoordinate">Y-Coordinate</label>
+							<input type="number" step="any" class="form-control" id="YCoordinate">
+						</div>
+					<button type="button" class="btn btn-success" id="addNewPt-btn">
+						Add Track
+					</button>
+					</form>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Map Notes</h3>
+					</div>
+					<div class="panel-body" id="map-notes-field"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="/mouseBrains/js/jquery.min.js"></script>
+	<script src="/mouseBrains/js/myjq.js?v=1.1.0"></script>
+	<script>
+		var mapObjectStr = '<!--MAP_JSON_DATA-->';
+		var mapObject = JSON.parse(mapObjectStr);
+		LoadMapInformation(mapObject.ResponseObject);
+	</script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="/mouseBrains/js/plot.js"></script>
+	<script>
+		CreateBrainMap(mapObject.ResponseObject);
+	</script>
+	<script src="/mouseBrains/js/bootstrap.min.js"></script>
+	<script src="/mouseBrains/js/scripts.js"></script>
+
+</body>
+</html>

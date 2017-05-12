@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>Mouse Brain Mapper</title>
+
+	<meta name="description" content="A map that shows a mouse's brain.">
+	<meta name="author" content="John Subtirelu">
+
+	<link href="/mouseBrains/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/mouseBrains/css/style.css?v=1.1.0" rel="stylesheet">
+</head>
+
+<body>
+	<div class="container-fullwidth">
+		<nav class="navbar navbar-default">
+			<div class="container">
+				<div class="navbar-header">
+					<div class="navbar-brand">Mouse Brain Mapper</div>
+				</div>
+				<ul class="nav nav-tabs">
+					<li role="presentation"><a href="/mouseBrains">Home</a></li>
+					<li role="presentation"><a href="/mouseBrains/map/create">New Map</a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-md-6">
+				<div class="jumbotron">
+					<h2 id="map-name-field">
+					</h2>
+					<p>
+						<div id="map-datecreated-field"></div>
+						<div id="map-description-field"></div><br/>
+						<a id="map-editlink-field" href="" class="btn btn-info"><b>Edit Map</b></a>
+					</p>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Mouse Name</th>
+							<th>Mouse Strain</th>
+							<th>Body Weight</th>
+							<th>Date of Birth</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td id="mouse-name-field"></td>
+							<td id="mouse-strain-field"></td>
+							<td id="body-weight-field"></td>
+							<td id="birth-date-field"></td>
+						</tr>
+					</tbody>
+				</table>
+				<table class="table">	
+					<thead>
+						<tr>
+							<th>Bregma</th>
+							<th>Lambda</th>
+							<th>Midline</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td id="bregma-field"></td>
+							<td id="lambda-field"></td>
+							<td id="midline-field"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+
+		<div class="row">
+			<div class="col-md-4">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Track Data</h3>
+					</div>
+					<div class="panel-body">
+						<table class="table">
+							<tbody>
+								<tr>
+									<th>Name</th>
+									<td id="point-name-field"></td>
+								</tr>
+								<tr>
+									<th>Notes</th>
+									<td id="point-notes-field"></td>
+								</tr>
+								<tr>
+									<th>Coordinates</th>
+									<td id="point-coordinates-field"></td>
+								</tr>
+								<tr>
+									<th>Date Created</th>
+									<td id="point-datecreated-field"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">Map Notes</h3>
+					</div>
+					<div class="panel-body" id="map-notes-field">You haven't saved any notes yet.</div>
+				</div>
+			</div>
+			<div class="col-md-8">
+				<div id="myDiv" style="width: 600px; height: 600px;"></div>
+			</div>
+		</div>
+	</div>
+
+	<script src="/mouseBrains/js/jquery.min.js"></script>
+	<script src="/mouseBrains/js/myjq.js?v=1.1.0"></script>
+	<script>
+		var mapObjectStr = '<!--MAP_JSON_DATA-->';
+		var mapObject = JSON.parse(mapObjectStr);
+		LoadMapInformation(mapObject.ResponseObject);
+	</script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="/mouseBrains/js/plot.js"></script>
+	<script>CreateBrainMap(mapObject.ResponseObject);</script>
+	<script src="/mouseBrains/js/bootstrap.min.js"></script>
+	<script src="/mouseBrains/js/scripts.js"></script>
+
+</body>
+</html>
