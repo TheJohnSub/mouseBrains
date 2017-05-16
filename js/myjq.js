@@ -8,9 +8,9 @@ Change Log
 
 var PublicCoorType = '';
 
-var BREGMA_SPAN = ' <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="LaunchCoordinateModal(\'Bregma\')">';
-var LAMBDA_SPAN = ' <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="LaunchCoordinateModal(\'Lambda\')">';
-var MIDLINE_SPAN = ' <span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="LaunchCoordinateModal(\'Midline\')">';
+var BREGMA_SPAN = ' <a href="#"><span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="LaunchCoordinateModal(\'Bregma\')"></a>';
+var LAMBDA_SPAN = ' <a href="#"><span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="LaunchCoordinateModal(\'Lambda\')"></a>';
+var MIDLINE_SPAN = ' <a href="#"><span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="LaunchCoordinateModal(\'Midline\')"></a>';
 
 if ($("#addNewPt-btn").length == 0) {
   BREGMA_SPAN = '';
@@ -26,7 +26,8 @@ function LoadMapInformation(mapObject){
 
 
     $("#mouse-name-field").html(mapObject.MouseName);
-    $("#map-editlink-field").attr("href", "/mouseBrains/map/edit/" + mapObject.MapID)
+    $("#map-editlink-field").attr("href", "/mouseBrains/map/edit/" + mapObject.MapID);
+    $("#map-savelink-field").attr("href", "/mouseBrains/map/view/" + mapObject.MapID);
     $("#mouse-strain-field").html(mapObject.MouseStrain);
     $("#body-weight-field").html(mapObject.BodyWeight);
     $("#birth-date-field").html(mapObject.DateOfBirth);
@@ -35,6 +36,13 @@ function LoadMapInformation(mapObject){
       $("#map-notes-field").html(mapObject.Notes);
     }
     else $("#map-notes-field").html("You haven't saved any notes on this map yet.");
+    if (mapObject.ChangeLog) {
+      $("#change-log-field").html(mapObject.ChangeLog);
+    }
+    else $("#change-log-field").html("No changes have been made yet.");
+
+
+        
 
     $("#bregma-field").html('(' + mapObject.BregmaX + ', ' + mapObject.BregmaY + ', ' + mapObject.BregmaZ + ')' + BREGMA_SPAN);
     $("#lambda-field").html('(' + mapObject.LambdaX + ', ' + mapObject.LambdaY + ', ' + mapObject.LambdaZ + ')' + LAMBDA_SPAN);
@@ -111,6 +119,29 @@ $(document).ready(function(){
       });
 
       //AddPointToMap(formData);
+  });
+
+
+  $("#addNotes-btn").click(
+    function(){
+      var formData = {};
+      formData.MapID = mapObject.ResponseObject.MapID;
+      formData.Notes = $("#mapNotes").val();
+
+      $.ajax({
+        type: "post",
+        url: "/mouseBrains/map/addNotes",
+        data: JSON.stringify(formData),
+        contentType: "application/json",
+        success: function(result){
+            if (result.ResponseCode == 200) {   
+              $("#map-notes-field").html(result.ResponseObject.Notes);
+              $("#mapNotes").val('');
+            }
+            else {
+            }  
+          }
+      });
   });
 
   $("#updateMapCoor-btn").click(

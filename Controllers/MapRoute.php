@@ -49,11 +49,15 @@ class MapRoute
 
 		else if ($pathArr[ARRAY_START+1] == "save")
 		{
+			header('Content-type: application/json');
 			$response = new Response(0, "", NULL);
 			$postData = json_decode($postData);
 			if ($postData->Notes == "" || $this->SaveMap($db, $postData->MapID, $postData->Notes, $response) == TRUE)
-			{		
-				$this->redirect('/mouseBrains/map/view/' . $postData->MapID);			
+			{
+				$map = $this->GetMapById($postData->MapID, $db);	
+				$map->JSONSanitize();	
+				$response = new Response(200, "Notes added to map.", $map);
+				//$this->redirect('/mouseBrains/map/view/' . $postData->MapID);			
 			}
 			else 
 			{
@@ -83,6 +87,26 @@ class MapRoute
 			$HTMLContent = str_replace("<!--MAP_JSON_DATA-->", $response->toJSON(), $HTMLContent);
 			return $HTMLContent;
 		}
+
+		else if ($pathArr[ARRAY_START+1] == "addNotes")
+		{
+			header('Content-type: application/json');
+			$response = new Response(0, "", NULL);
+			$requestObj = json_decode($postData);
+			if ($requestObj->Notes == "" || $this->SaveMap($db, $requestObj->MapID, $requestObj->Notes, $response) == TRUE)
+			{
+				$map = $this->GetMapById($requestObj->MapID, $db);	
+				$map->JSONSanitize();	
+				$response = new Response(200, "Notes added to map.", $map);
+				//$this->redirect('/mouseBrains/map/view/' . $postData->MapID);			
+			}
+			else 
+			{
+				$response->ResponceCode = 500;
+			}
+			return $response->toJSON();
+		}
+
 
 		else if ($pathArr[ARRAY_START+1] == "coorup")
 		{
@@ -152,19 +176,41 @@ class MapRoute
 		}
 		else
 		$mapObj->CreateFromQuery($queryResult);
+
 		$sql = 'SELECT * FROM points WHERE MapID = ' . $id;
 		$queryResult = $db->ExecuteListQuery($sql);
 		if (is_null($queryResult))
 		{
-			return $mapObj;
+			//return $mapObj;
 		}
-		$mapObj->Points = array();
-		foreach($queryResult as $point) {
+		else 
+		{
+			$mapObj->Points = array();
+			foreach($queryResult as $point) 
+			{
+				$newPoint = new Point();
+				$newPoint->CreateFromQuery($point);
+				JSONSanitize($newPoint);
+				$mapObj->Points[] = $newPoint;
+			}
+		}
 
-			$newPoint = new Point();
-			$newPoint->CreateFromQuery($point);
-			JSONSanitize($newPoint);
-			$mapObj->Points[] = $newPoint;
+		$sql = 'SELECT * FROM changes WHERE MapID = ' . $id . " AND IsPublicChange='TRUE'";
+		$queryResult = $db->ExecuteListQuery($sql);
+		if (is_null($queryResult))
+		{
+			//return $mapObj;
+		}
+		else 
+		{
+			foreach($queryResult as $change) 
+			{
+				$newChange = new Change();
+				$newChange->CreateFromQuery($change);
+				JSONSanitize($newChange);
+				$mapObj->ChangeLog = $mapObj->ChangeLog . $newChange->ChangeLog;
+			}
+			//echo $mapObj->ChangeLog;
 		}
 		return $mapObj;
 	}

@@ -50,7 +50,7 @@ class Change
 		$this->OriginalValue = $CoorType . ': ' . $oldXYZ;
 		$this->NewValue = $CoorType . ': ' . $newXYZ;
 		$this->ChangeDate = date('Y-m-d H:i:s');
-		$this->ChangeLog = '<b>' . $this->ChangeDate . '</b><br/>' . $CoorType . ' values were updated. Old values: ' . $oldXYZ . '. New values: ' . $newXYZ . '. <br/><br/>';
+		$this->ChangeLog = '<b>' . $this->ChangeDate . '</b> ' . $CoorType . ' values were updated. <br/> Old values: ' . $oldXYZ . '. New values: ' . $newXYZ . '. <br/><br/>';
 	}
 
 	function ValListStr($db)
