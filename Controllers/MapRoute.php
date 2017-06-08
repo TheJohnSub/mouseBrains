@@ -49,11 +49,15 @@ class MapRoute
 
 		else if ($pathArr[ARRAY_START+1] == "save")
 		{
+			header('Content-type: application/json');
 			$response = new Response(0, "", NULL);
 			$postData = json_decode($postData);
 			if ($postData->Notes == "" || $this->SaveMap($db, $postData->MapID, $postData->Notes, $response) == TRUE)
-			{		
-				$this->redirect('/mouseBrains/map/view/' . $postData->MapID);			
+			{
+				$map = $this->GetMapById($postData->MapID, $db);	
+				$map->JSONSanitize();	
+				$response = new Response(200, "Notes added to map.", $map);
+				//$this->redirect('/mouseBrains/map/view/' . $postData->MapID);			
 			}
 			else 
 			{
@@ -61,8 +65,6 @@ class MapRoute
 			}
 			return $response->toJSON();
 		}
-
-
 
 		else if ($pathArr[ARRAY_START+1] == "new")
 		{
@@ -86,15 +88,43 @@ class MapRoute
 			return $HTMLContent;
 		}
 
+		else if ($pathArr[ARRAY_START+1] == "addNotes")
+		{
+			header('Content-type: application/json');
+			$response = new Response(0, "", NULL);
+			$requestObj = json_decode($postData);
+			if ($requestObj->Notes == "" || $this->SaveMap($db, $requestObj->MapID, $requestObj->Notes, $response) == TRUE)
+			{
+				$map = $this->GetMapById($requestObj->MapID, $db);	
+				$map->JSONSanitize();	
+				$response = new Response(200, "Notes added to map.", $map);
+				//$this->redirect('/mouseBrains/map/view/' . $postData->MapID);			
+			}
+			else 
+			{
+				$response->ResponceCode = 500;
+			}
+			return $response->toJSON();
+		}
+
+
 		else if ($pathArr[ARRAY_START+1] == "coorup")
 		{
 			header('Content-type: application/json');
 			$response = new Response(0, "", NULL);
-			
 			$requestObj = json_decode($postData);
+			$oldMapObj = $this->GetMapById($requestObj->MapID, $db);
+			$CoorType = $requestObj->CoorType;
 			if ($this->UpdateMapCoordinate($db, $requestObj, $response) == TRUE)
 			{
-				$response->ResponseObject = $requestObj;
+				$newMapObj = $this->GetMapById($requestObj->MapID, $db);
+				$changeObj = new Change();
+				$changeObj->CreateCoordinateUpdateChange($oldMapObj, $newMapObj, $requestObj->CoorType);
+
+				$this->InsertChange($db, $changeObj, $response);
+				$xyzResp = new XYZResp($newMapObj->{$CoorType . 'X'}, $newMapObj->{$CoorType . 'Y'}, $newMapObj->{$CoorType . 'Z'});
+
+				$response->ResponseObject = $xyzResp;
 				$response->ResponseCode = 200;
 				$response->ResponseMessage = "Coordinates saved.";
 			}
@@ -146,19 +176,41 @@ class MapRoute
 		}
 		else
 		$mapObj->CreateFromQuery($queryResult);
+
 		$sql = 'SELECT * FROM points WHERE MapID = ' . $id;
 		$queryResult = $db->ExecuteListQuery($sql);
 		if (is_null($queryResult))
 		{
-			return $mapObj;
+			//return $mapObj;
 		}
-		$mapObj->Points = array();
-		foreach($queryResult as $point) {
+		else 
+		{
+			$mapObj->Points = array();
+			foreach($queryResult as $point) 
+			{
+				$newPoint = new Point();
+				$newPoint->CreateFromQuery($point);
+				JSONSanitize($newPoint);
+				$mapObj->Points[] = $newPoint;
+			}
+		}
 
-			$newPoint = new Point();
-			$newPoint->CreateFromQuery($point);
-			JSONSanitize($newPoint);
-			$mapObj->Points[] = $newPoint;
+		$sql = 'SELECT * FROM changes WHERE MapID = ' . $id . " AND IsPublicChange='TRUE'";
+		$queryResult = $db->ExecuteListQuery($sql);
+		if (is_null($queryResult))
+		{
+			//return $mapObj;
+		}
+		else 
+		{
+			foreach($queryResult as $change) 
+			{
+				$newChange = new Change();
+				$newChange->CreateFromQuery($change);
+				JSONSanitize($newChange);
+				$mapObj->ChangeLog = $mapObj->ChangeLog . $newChange->ChangeLog;
+			}
+			//echo $mapObj->ChangeLog;
 		}
 		return $mapObj;
 	}
@@ -212,6 +264,19 @@ class MapRoute
 	{
    		header('Location: ' . $url, true, $statusCode);
    		die();
+	}
+
+	function InsertChange($db, $changeObj, $responseObj)
+	{
+		$objAsStr = $changeObj->ValListStr($db);
+		$sql = 'INSERT INTO changes(MapID, UserID, ChangeDate, ChangeType, OriginalValue, NewValue, IsPublicChange, ChangeLog) VALUES (' . $objAsStr . ')';
+		$result = '';
+		if ($db->ExecuteInsert($sql, $responseObj) === TRUE) {
+    		$result = "New record created successfully.";
+		} else {
+    		$result =  "Error inserting record.";
+		}
+		return $result;	
 	}
 }
 

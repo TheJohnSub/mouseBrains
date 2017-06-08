@@ -11,7 +11,7 @@
 	<meta name="author" content="John Subtirelu">
 
 	<link href="/mouseBrains/css/bootstrap.min.css" rel="stylesheet">
-	<link href="/mouseBrains/css/style.css?v=1.1.0" rel="stylesheet">
+	<link href="/mouseBrains/css/style.css?v=1.2.0" rel="stylesheet">
 </head>
 
 
@@ -39,6 +39,7 @@
 					<p>
 						<div id="map-datecreated-field"></div>
 						<div id="map-description-field"></div><br/>
+						<a id="map-savelink-field" href="" class="btn btn-success"><b>Save Map</b></a>
 					</p>
 				</div>
 			</div>
@@ -71,10 +72,7 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td><div class="input-group">
-							  <div id="bregma-field"></div>
-							  <!--<span class="glyphicon glyphicon-pencil" aria-hidden="true" onclick="LaunchCoordinateModal('Bregma')"></span>	-->
-							</div></td>
+							<td id="bregma-field"></td>
 							<td id="lambda-field"></td>
 							<td id="midline-field"></td>
 						</tr>
@@ -106,7 +104,7 @@
 						      </div>
 						      <div class="modal-footer">
 						        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						        <button type="button" class="btn btn-primary">Save changes</button>
+						        <button type="button" class="btn btn-primary" id="updateMapCoor-btn">Save changes</button>
 						      </div>
 						    </div>
 						  </div>
@@ -121,7 +119,7 @@
 			<div class="col-md-4">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">Track Data</h3>
+						<h3 class="panel-title" data-toggle="tooltip" title="Click a point on the map to see track data.">Track Data</h3>
 					</div>
 					<div class="panel-body">
 						<table class="table">
@@ -148,18 +146,18 @@
 				</div>
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">Save Map</h3>
+						<h3 class="panel-title">Map Notes</h3>
 					</div>
-					<form class="panel-body" id="saveMap-form" action="/mouseBrains/map/save" method="post">
+					<div class="panel-body" id="map-notes-field"></div>
+					<form class="panel-body" id="addNotes-form">
 						<div class="form-group">
 							<label for="mapNotes">
-								Notes
+								Add Notes
 							</label>
-							<textarea class="form-control" rows="5" id="mapNotes" name="Notes"></textarea>
+							<textarea data-toggle="tooltip" title="Save notes to the map at any time while editing." class="form-control" rows="5" id="mapNotes" name="Notes"></textarea>
 						</div>
-						<input type="hidden" id="saveMap-mapId" name="MapID" value="" />
-						<button type="submit" class="btn btn-success" id="saveMap-btn">
-							Save Map
+						<button type="button" class="btn btn-success" id="addNotes-btn">
+							Add Notes
 						</button>
 					</form>		
 				</div>
@@ -194,17 +192,11 @@
 					</button>
 					</form>
 				</div>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Map Notes</h3>
-					</div>
-					<div class="panel-body" id="map-notes-field"></div>
-				</div>
 			</div>
 		</div>
 	</div>
 	<script src="/mouseBrains/js/jquery.min.js"></script>
-	<script src="/mouseBrains/js/myjq.js?v=1.1.0"></script>
+	<script src="/mouseBrains/js/myjq.js?v=1.2.0"></script>
 	<script>
 		var mapObjectStr = '<!--MAP_JSON_DATA-->';
 		var mapObject = JSON.parse(mapObjectStr);

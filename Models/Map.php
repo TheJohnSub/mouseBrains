@@ -29,6 +29,7 @@ class Map
 	public $DateCreated;
 
 	public $Points;
+	public $ChangeLog = '';
 
 
 	function CreateFromQuery($DBRow)
